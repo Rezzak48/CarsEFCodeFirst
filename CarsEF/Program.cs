@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 
 namespace CarsEF
 {
@@ -31,6 +32,14 @@ namespace CarsEF
             ctx.Brands.Select(x => x.Name).ToConsole("Brands");
             ctx.Cars.Select(x => $"{ x.Model} from {x.Brand.Name}").ToConsole("Cars");
 
+            var q = from car in ctx.Cars
+                    group car by new { car.BrandId, car.Brand.Name } into grp
+                    select new
+                    {
+                        Brand =  grp.Key,
+                        AveragePrice = grp.Average(x => x.BestPrice)
+                    };
+            q.ToConsole("AVG Prices");
         }
     }
 }
